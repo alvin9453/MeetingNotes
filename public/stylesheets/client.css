@@ -1,0 +1,45 @@
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      #msg{
+        border: 2px solid black;
+        padding: 10px;
+        width: 20%;
+        margin: .5%;
+        position: fixed;
+        bottom: 0;
+		right : 6%;
+      }
+      #send{
+        width: 5%;
+        margin: .5%;
+        background: rgb(121,2,2);
+        color:white;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        right:5px;
+      }
+      #message_block{
+        width:30%;
+        position: absolute;
+		right : 0;
+        top:0;
+        bottom:5%;
+        margin-bottom:10px;
+        border: solid 2px black;
+        overflow:auto;
+      }
+	  #slide_block{
+        width:70%;
+		left : 0;
+        position: absolute;
+        top:0;
+        bottom:0;
+        margin-bottom:10px;
+        border: solid 2px black;
+        overflow:auto;
+
+	 }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; font-size:16pt; }
+      #messages li:nth-child(odd) { background: #eee; }

@@ -1,0 +1,72 @@
+#!/usr/bin/nodejs
+var debug = require('debug')('my-application');
+var app = require('../app');
+
+var port = 8080;
+
+app.set('port', process.env.PORT || port);
+
+var server = app.listen(app.get('port'), function() {
+  console.log("Listen on : localhost:" , port);
+  debug('Express server listening on port ' + server.address().port);
+});
+
+
+// socket.io
+
+var io = require('socket.io');
+var fs = require('fs');
+
+
+var serv_io = io.listen(server);
+
+serv_io.sockets.on('connection', function(socket) {
+  socket.on('add user',function(user){
+		socket.user = user;
+    console.log('new user : '+user);
+    serv_io.emit('chat message',{ user : user , msg:"加入紀錄系統"});
+
+		//read file
+		var filepath = __dirname + '/../notes' + '/note_' + socket.user + '.txt';
+    console.log(filepath);
+		fs.exists(filepath , function(exists){
+			if(exists){
+				fs.readFile(filepath, 'utf8', function(err, contents){
+					if(!err){
+						//console.log(contents);
+						var result = contents.split("\n");
+						for(var i = 0; i < result.length -1 ; i++){
+								socket.emit('show notes',result[i]);
+						}
+					}
+					else
+						consolg.log('Error. Failed to read file.');
+				} );
+
+			}
+			else {
+				console.log('New user, There are no notes can be load.');
+			}
+
+		});
+
+  });
+  socket.on('msg',function(msg){
+		var date = msg.time;
+		var filename = __dirname + '/../notes_record' + '/note_' + socket.user + '.txt';
+		console.log( '[' + date + ']' + socket.user + ':' + msg.msg);
+    serv_io.emit('chat message', {date : date, user : socket.user , msg : msg.msg });
+		fs.appendFile( filename , date  + '-' + socket.user + '-' +msg.msg + '\n', function(error){
+			if(error){
+				console.log('Taking notes error.');
+			}
+		});
+  });
+  socket.on('disconnect',function(){  //disconnect是有特殊意義的!!!不能隨便亂取
+		var dt = new Date();
+		var date = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+	  console.log( socket.user + ' disconnect' );
+    serv_io.emit('chat message', {date : date, user : socket.user , msg : "已離開 QAQ" });
+  });
+
+});

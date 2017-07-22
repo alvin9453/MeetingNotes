@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <link rel='stylesheet' href='/stylesheets/client.css' rel='stylesheet' />
+  <link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' />
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    var socket = io();
+    //var name = prompt("Input your name : ","guest");
+    var name = "<%= user.username %>";
+    socket.emit("add user", name);
+    function msg_send(){
+      var message = document.getElementById('msg').value;
+      socket.emit("msg",{msg:message});
+      document.getElementById('msg').value = "";
+    };
+    socket.on('chat message', function(chat){
+      var ul = document.createElement("ul");
+      var new_msg_node = document.createTextNode(chat.user + " : " + chat.msg);
+      ul.appendChild(new_msg_node);
+      var element = document.getElementById("message_block");
+      element.appendChild(ul);
+    });
+    socket.on('show notes', function(notes){
+      var ul = document.createElement("ul");
+      var new_msg_node = document.createTextNode(tmp[1]+ ' : ' + tmp[2]);
+      ul.appendChild(new_msg_node);
+      var element = document.getElementById("message_block");
+      element.appendChild(ul);
+    });
+    function secondsToHms(d) {
+      d = Number(d);
+      var h = Math.floor(d / 3600);
+      var m = Math.floor(d % 3600 / 60);
+      var s = Math.floor(d % 3600 % 60);
+      return ((h > 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + ":" + (s < 10 ? "0" : "") + s);
+    }
+    function searchKeyPress(e){
+        // look for window.event in case event isn't passed in
+        e = e || window.event;
+        if (e.keyCode == 13){
+            document.getElementById('send').click();
+            return false;
+        }
+        return true;
+    }
+  </script>
+  <script>
+    function show_ppt(){
+      var ppt_url = "<%= ppt_url %>";
+      console.log(ppt_url);
+
+      var slide_block = document.getElementById("slide_block");
+      var iframe_node = document.createElement("iframe");
+      iframe_node.setAttribute("src" , ppt_url);
+      iframe_node.setAttribute("style","width:800px; height:600px;");
+
+      slide_block.appendChild(iframe_node);
+    }
+
+  </script>
+  <title>Meeting Notes System</title>
+
+</head>
+<body>
+    <h1>Title : <%= ppt_title %></h1>
+    <div id="message_block">
+      <ul id="show_msg"></ul>
+    </div>
+    <div id="slide_block">
+      <p>
+        <input id="show_ppt_btn" type="button" onclick="show_ppt();" value="Show"/>
+      </p>
+      <iframe src='https://onedrive.live.com/embed?cid=69DD0BAF078EDC3D&resid=69DD0BAF078EDC3D%21196&authkey=ADofb9axayzlA2k&em=2&wdAr=1.7777777777777777' width='1186px' height='691px' frameborder='0'>這是 <a target='_blank' href='https://office.com/webapps'>Office Online</a> 提供的內嵌 <a target='_blank' href='https://office.com'>Microsoft Office</a> 簡報。</iframe>
+
+    </div>
+    <div>
+      <input id='msg' autocomplete="off" onkeypress="return searchKeyPress(event);" />
+      <button id='send'onclick='msg_send()'>Send</button>
+    </div>

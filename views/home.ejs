@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' />
+  <title>Meeting Note System</title>
+</head>
+<body>
+  <h1>Hello ! <%= user.firstName %></h1>
+  <form action="add_ppt_url" method="POST">
+    PPT url :  <input type="text" name="ppt_url" />
+    PPT title :  <input type="text" name="ppt_title" />
+      <input type="submit" value="送出" />
+  </form>
+  <div>
+    <% for( var i = 0 ; i < ppt_data.length ; i++){  %>
+        <form action="meeting" method="POST">
+            <input type="hidden" name="input_ppt_url" value=<%= ppt_data[i].url %> >
+            <input type="submit" name="input_ppt_title" value=<%= ppt_data[i].ppt_title %> >
+        </form>
+    <% } %>
+  </div>
+</body>
+</html>
