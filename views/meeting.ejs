@@ -8,7 +8,10 @@
   <script>
     var socket = io();
     //var name = prompt("Input your name : ","guest");
+    console.log("<%= data[0].ppt_title %>");
     var name = "<%= user.username %>";
+    var title = "<%= data[0].ppt_title %>";
+    socket.emit("join room" , title);
     socket.emit("add user", name);
     function msg_send(){
       var message = document.getElementById('msg').value;
@@ -47,33 +50,30 @@
     }
   </script>
   <script>
-    function show_ppt(){
-      var ppt_url = "<%= ppt_url %>";
-      console.log(ppt_url);
+    function parse_url(){
+      var patt = /https:.*?&#39/;
+      var str = "<%= data[0].url %>";
+      var match = patt.exec(str);
+      console.log(match[0]);
+      var url = match[0].substr(0,match[0].length - 4);
+      url = url.replace(/&amp;/g,"&");
+      console.log(url);
 
-      var slide_block = document.getElementById("slide_block");
-      var iframe_node = document.createElement("iframe");
-      iframe_node.setAttribute("src" , ppt_url);
-      iframe_node.setAttribute("style","width:800px; height:600px;");
-
-      slide_block.appendChild(iframe_node);
+      var iframeNode = document.createElement("iframe");
+      iframeNode.setAttribute("src",url);
+      document.getElementById("slide_block").appendChild(iframeNode);
     }
 
   </script>
   <title>Meeting Notes System</title>
 
 </head>
-<body>
-    <h1>Title : <%= ppt_title %></h1>
+<body onload="parse_url()">
+    <h1>Title : <%= data[0].ppt_title %></h1>
     <div id="message_block">
       <ul id="show_msg"></ul>
     </div>
     <div id="slide_block">
-      <p>
-        <input id="show_ppt_btn" type="button" onclick="show_ppt();" value="Show"/>
-      </p>
-      <iframe src='https://onedrive.live.com/embed?cid=69DD0BAF078EDC3D&resid=69DD0BAF078EDC3D%21196&authkey=ADofb9axayzlA2k&em=2&wdAr=1.7777777777777777' width='1186px' height='691px' frameborder='0'>這是 <a target='_blank' href='https://office.com/webapps'>Office Online</a> 提供的內嵌 <a target='_blank' href='https://office.com'>Microsoft Office</a> 簡報。</iframe>
-
     </div>
     <div>
       <input id='msg' autocomplete="off" onkeypress="return searchKeyPress(event);" />

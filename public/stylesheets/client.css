@@ -31,15 +31,19 @@
       }
 	  #slide_block{
         width:70%;
-		left : 0;
+		      left : 0;
         position: absolute;
         top:0;
         bottom:0;
         margin-bottom:10px;
         border: solid 2px black;
         overflow:auto;
+	   }
+     iframe {
+       resize: both;
+       overflow: auto;
+     }
 
-	 }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; font-size:16pt; }
       #messages li:nth-child(odd) { background: #eee; }

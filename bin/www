@@ -2,7 +2,7 @@
 var debug = require('debug')('my-application');
 var app = require('../app');
 
-var port = 8080;
+var port = 8081;
 
 app.set('port', process.env.PORT || port);
 
@@ -24,7 +24,7 @@ serv_io.sockets.on('connection', function(socket) {
   socket.on('add user',function(user){
 		socket.user = user;
     console.log('new user : '+user);
-    serv_io.emit('chat message',{ user : user , msg:"加入紀錄系統"});
+    serv_io.sockets.in(socket.room).emit('chat message',{ user : user , msg:"加入紀錄系統"});
 
 		//read file
 		var filepath = __dirname + '/../notes' + '/note_' + socket.user + '.txt';
@@ -52,21 +52,23 @@ serv_io.sockets.on('connection', function(socket) {
 
   });
   socket.on('msg',function(msg){
-		var date = msg.time;
 		var filename = __dirname + '/../notes_record' + '/note_' + socket.user + '.txt';
-		console.log( '[' + date + ']' + socket.user + ':' + msg.msg);
-    serv_io.emit('chat message', {date : date, user : socket.user , msg : msg.msg });
-		fs.appendFile( filename , date  + '-' + socket.user + '-' +msg.msg + '\n', function(error){
+		console.log( socket.user + ':' + msg.msg);
+    serv_io.sockets.in(socket.room).emit('chat message', { user : socket.user , msg : msg.msg });
+		fs.appendFile( filename , socket.user + '-' +msg.msg + '\n', function(error){
 			if(error){
 				console.log('Taking notes error.');
 			}
 		});
   });
+  socket.on('join room',function(room){
+    socket.room = room;
+    socket.join(room);
+  });
   socket.on('disconnect',function(){  //disconnect是有特殊意義的!!!不能隨便亂取
-		var dt = new Date();
-		var date = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
-	  console.log( socket.user + ' disconnect' );
-    serv_io.emit('chat message', {date : date, user : socket.user , msg : "已離開 QAQ" });
+    socket.leave(socket.room)
+		console.log( socket.user + ' disconnect' );
+    serv_io.emit('chat message', { user : socket.user , msg : "已離開 QAQ" });
   });
 
 });

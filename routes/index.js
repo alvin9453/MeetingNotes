@@ -44,8 +44,6 @@ module.exports = function(passport){
 	router.get('/home', isAuthenticated, function(req, res){
 		PPTURLs.find( function (err, data ){
 				if (err) return console.error(err);
-				console.log("Find Something in db");
-				console.log(data);
 				res.render('home' , {
 						user : req.user,
 						ppt_data : data
@@ -62,7 +60,6 @@ module.exports = function(passport){
 	});
 
 	router.post('/add_ppt_url', function(req,res){
-		console.log('Post ppt url is :' , req.body.ppt_url);
 		var url = req.body.ppt_url;
 		var ppt_title = req.body.ppt_title;
 
@@ -71,8 +68,7 @@ module.exports = function(passport){
 		ppt.ppt_title = ppt_title;
 		ppt.save(function (err , result){
 			if(err) return console.error(err);
-			else
-				console.log("Success! " , result);
+
 		});
 		res.redirect("home");
 
@@ -84,13 +80,21 @@ module.exports = function(passport){
 		res.locals.authenticated = req.session.logined;
 		console.log("Body" , req.body);
 		console.log(req.user);
-		res.render('meeting',
-				{
-						user : req.user,
-						ppt_url : req.body.input_ppt_url,
-						ppt_title : req.body.input_ppt_title
 
-				});
+		var ppt = new PPTURLs();
+		var title = req.body.input_ppt_title;
+
+		console.log(title);
+
+		PPTURLs.find( { ppt_title : title } , function(err, data){
+			console.log(data);
+			res.render('meeting',
+					{
+							user : req.user,
+							data : data
+					});
+		});
+
 
 	});
 
