@@ -62,10 +62,15 @@ module.exports = function(passport){
 	router.post('/add_ppt_url', function(req,res){
 		var url = req.body.ppt_url;
 		var ppt_title = req.body.ppt_title;
+		var speaker = req.body.ppt_speaker;
+		var date = req.body.ppt_date;
 
 		var ppt = new PPTURLs();
 		ppt.url = url;
 		ppt.ppt_title = ppt_title;
+		ppt.speaker = speaker;
+		ppt.date = date;
+		console.log("Date : " + date);
 		ppt.save(function (err , result){
 			if(err) return console.error(err);
 
