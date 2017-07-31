@@ -11,6 +11,13 @@
     overflow:auto;
     resize: both;
   }
+  #message_block3{
+    position: relative;
+    height:100px;
+    border: solid 2px black;
+    overflow:auto;
+    resize: both;
+  }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/socket.io/socket.io.js"></script>
@@ -34,27 +41,42 @@
       }
 
     };
-    socket.on('chat message', function(chat){
+    socket.on('meeting message', function(msg){
       var ul = document.createElement("ul");
-      var new_msg_node = document.createTextNode(chat.user + " : " + chat.msg);
+      var new_msg_node = document.createTextNode(msg.user + " : " + msg.msg);
       ul.appendChild(new_msg_node);
-      var element = document.getElementById("message_block");
+      if(msg.type == "Question")
+        var element = document.getElementById("message_block");
+      else if(msg.type == "Comment")
+        var element = document.getElementById("message_block2");
+      else
+        var element = document.getElementById("message_block3");
       element.appendChild(ul);
     });
-    socket.on('show notes', function(notes){
+    socket.on('show notes', function(records){
       var ul = document.createElement("ul");
-      var new_msg_node = document.createTextNode(tmp[1]+ ' : ' + tmp[2]);
-      ul.appendChild(new_msg_node);
-      var element = document.getElementById("message_block");
-      element.appendChild(ul);
+      var tmp = records.split(')');
+      if(tmp[0] == "(Question"){
+        var new_msg_node = document.createTextNode(tmp[1]);
+        ul.appendChild(new_msg_node);
+        var element = document.getElementById("message_block");
+        element.appendChild(ul);
+      }
+      else if(tmp[0] == "(Comment"){
+        var new_msg_node = document.createTextNode(tmp[1]);
+        ul.appendChild(new_msg_node);
+        var element = document.getElementById("message_block2");
+        element.appendChild(ul);
+      }
     });
+    /*
     function secondsToHms(d) {
       d = Number(d);
       var h = Math.floor(d / 3600);
       var m = Math.floor(d % 3600 / 60);
       var s = Math.floor(d % 3600 % 60);
       return ((h > 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + ":" + (s < 10 ? "0" : "") + s);
-    }
+    }*/
     function searchKeyPress(e){
         // look for window.event in case event isn't passed in
         e = e || window.event;
@@ -99,7 +121,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Meeting Notes System</a>
+        <a class="navbar-brand" href="home">Meeting Notes System</a>
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
@@ -107,6 +129,7 @@
           <li><a href="#">About</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+          <p class="navbar-text"><span class="glyphicon glyphicon-user"></span><%= user.username %></p>
           <li><a href="signout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
         </ul>
       </div>
@@ -117,37 +140,47 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-7 col-md-7">
+      <h2><%= data[0].ppt_title %></h2>
       <div class="embed-responsive embed-responsive-4by3" id="slide_block">
       </div>
     </div>
     <div class="col-sm-5 col-md-5">
+      <div class="input-group">
+        <span class="input-group-btn">
+            <div class="dropdown">
+                <button id="BtnTextType" class="btn dropdown-toggle" type="button" data-toggle="dropdown">Question<span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Question</button></li>
+                  <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Comment</button></li>
+                  <li class="divider"></li>
+                  <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Chat</button></li>
+                </ul>
+            </div>
+          </span>
+          <input id='msg' autocomplete="off" onkeypress="return searchKeyPress(event);" type="text" class="form-control" aria-label="Text input with dropdown button" placeholder="Input your message here...">
+          <span class="input-group-btn">
+            <button id='send' onclick='msg_send()' class="btn btn-primary btn-secondary " type="button">Enter</button>
+          </span>
+      </div>
+        <h2>Chat</h2>
+        <div class="well" id="message_block3">
+          <div >
+            <ul id="show_chat"></ul>
+          </div>
+        </div>
+        <h2>Questions</h2>
         <div class="well" id="message_block">
           <div >
-            <ul id="show_msg"></ul>
+            <ul id="show_question"></ul>
           </div>
         </div>
+        <h2>Comments</h2>
         <div class="well" id="message_block2">
           <div >
-            <ul id="show_msg"></ul>
+            <ul id="show_comment"></ul>
           </div>
         </div>
-        <div class="input-group">
-          <span class="input-group-btn">
-              <div class="dropdown">
-                  <button id="BtnTextType" class="btn dropdown-toggle" type="button" data-toggle="dropdown">Question</button>
-                  <ul class="dropdown-menu">
-                    <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Question</button></li>
-                    <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Comment</button></li>
-                    <li class="divider"></li>
-                    <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Chat</button></li>
-                  </ul>
-              </div>
-            </span>
-            <input id='msg' autocomplete="off" onkeypress="return searchKeyPress(event);" type="text" class="form-control" aria-label="Text input with dropdown button">
-            <span class="input-group-btn">
-              <button id='send' onclick='msg_send()' class="btn btn-primary btn-secondary " type="button">Enter</button>
-            </span>
-        </div>
+
     </div>
   </div>
 </div>

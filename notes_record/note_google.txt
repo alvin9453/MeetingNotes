@@ -1,2 +1,0 @@
-(google)guest2 : hi
-(google)test : hey

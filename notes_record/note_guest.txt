@@ -1,6 +1,0 @@
-0-guest-hi
-undefined-guest-123
-undefined-guest-444
-undefined-guest-55
-undefined-guest-1
-undefined-guest-23
