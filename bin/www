@@ -51,8 +51,8 @@ serv_io.sockets.on('connection', function(socket) {
 
   });
   socket.on('msg',function(msg){
-		var filename = __dirname + '/../notes_record' + '/note_' + msg.title + '.txt';
-		console.log( '(' + msg.type + ')' + socket.user + ':' + msg.msg + "Title : " + msg.title); // msg.title = socket.room
+		var filename = __dirname + '/../notes_record' + '/note_' + socket.room + '.txt';
+		console.log( '(' + msg.type + ')' + socket.user + ':' + msg.msg + "Title : " + socket.room); // msg.title = socket.room and replace some symbol
     serv_io.sockets.in(socket.room).emit('meeting message', { user : socket.user , msg : msg.msg , type : msg.type });
     if(msg.type != "Chat")  // I don't want to records the chat message...
 		  fs.appendFile( filename , '(' + msg.type + ')' +  socket.user + ' : ' +msg.msg + '\n', function(error){

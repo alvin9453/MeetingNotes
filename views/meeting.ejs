@@ -30,13 +30,21 @@
     console.log("<%= data[0].ppt_title %>");
     var name = "<%= user.username %>";
     var title = "<%= data[0].ppt_title %>";
-    socket.emit("join room" , title);
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？ ]")
+    var rs_title = "";
+    for (var i = 0; i < title.length; i++) {
+      rs_title = rs_title + title.substr(i, 1).replace(pattern, '_');
+    }
+    console.log(rs_title);
+    socket.emit("join room" , rs_title);
     socket.emit("add user", name);
     function msg_send(){
       var message = document.getElementById('msg').value;
       if( message != "" ){
         var inputType = document.getElementById("BtnTextType").innerHTML;
-        socket.emit("msg",{msg:message , type : inputType, title:title});
+        inputType = inputType.substr(0 , inputType.search(/</) );
+        console.log(inputType);
+        socket.emit("msg",{msg:message , type : inputType });
         document.getElementById('msg').value = "";
       }
 
@@ -44,12 +52,14 @@
     socket.on('meeting message', function(msg){
       var ul = document.createElement("ul");
       var new_msg_node = document.createTextNode(msg.user + " : " + msg.msg);
+      var mtype = msg.type;
       ul.appendChild(new_msg_node);
-      if(msg.type == "Question")
+      console.log(msg.type);
+      if( mtype.search(/Question/i) != -1 )
         var element = document.getElementById("message_block");
-      else if(msg.type == "Comment")
+      else if( mtype.search(/Comment/i) != -1 )
         var element = document.getElementById("message_block2");
-      else
+      else if( mtype.search(/Chat/i) != -1 )
         var element = document.getElementById("message_block3");
       element.appendChild(ul);
     });
@@ -86,8 +96,6 @@
         }
         return true;
     }
-  </script>
-  <script>
     function load_iframe(){
       var patt = /https:.*?&#39/;
       var str = "<%= data[0].url %>";
@@ -102,10 +110,8 @@
       iframeNode.setAttribute("class","embed-responsive-item");
       document.getElementById("slide_block").appendChild(iframeNode);
     }
-  </script>
-  <script>
     function inputType(btnValue){
-      document.getElementById("BtnTextType").innerHTML = btnValue.innerHTML;
+      document.getElementById("BtnTextType").innerHTML = btnValue.innerHTML + "<span class=\"caret\"></span>";
     }
 
   </script>
