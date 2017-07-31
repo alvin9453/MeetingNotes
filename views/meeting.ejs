@@ -4,16 +4,19 @@
   <meta charset="utf-8" />
 <!--  <link rel='stylesheet' href='/stylesheets/client.css' rel='stylesheet' /> -->
   <style>
-  #message_block{
+  #message_block , #message_block2{
     position: relative;
-    height:500px;
+    height:200px;
     border: solid 2px black;
     overflow:auto;
+    resize: both;
   }
   </style>
-  <link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/socket.io/socket.io.js"></script>
-  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
     var socket = io();
     //var name = prompt("Input your name : ","guest");
@@ -24,8 +27,12 @@
     socket.emit("add user", name);
     function msg_send(){
       var message = document.getElementById('msg').value;
-      socket.emit("msg",{msg:message});
-      document.getElementById('msg').value = "";
+      if( message != "" ){
+        var inputType = document.getElementById("BtnTextType").innerHTML;
+        socket.emit("msg",{msg:message , type : inputType, title:title});
+        document.getElementById('msg').value = "";
+      }
+
     };
     socket.on('chat message', function(chat){
       var ul = document.createElement("ul");
@@ -73,13 +80,18 @@
       iframeNode.setAttribute("class","embed-responsive-item");
       document.getElementById("slide_block").appendChild(iframeNode);
     }
+  </script>
+  <script>
+    function inputType(btnValue){
+      document.getElementById("BtnTextType").innerHTML = btnValue.innerHTML;
+    }
 
   </script>
   <title><%= data[0].ppt_title %></title>
 
 </head>
 <body onload="load_iframe()">
-  <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-inverse"> <!-- Nav bar on the top of screen  -->
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -102,20 +114,40 @@
   </nav>
 
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-sm-8 col-md-8">
+    <div class="col-sm-7 col-md-7">
       <div class="embed-responsive embed-responsive-4by3" id="slide_block">
       </div>
     </div>
-    <div class="col-sm-4 col-md-4">
+    <div class="col-sm-5 col-md-5">
         <div class="well" id="message_block">
           <div >
             <ul id="show_msg"></ul>
           </div>
         </div>
-        <input id='msg' autocomplete="off" onkeypress="return searchKeyPress(event);" />
-        <button id='send'onclick='msg_send()'>Send</button>
+        <div class="well" id="message_block2">
+          <div >
+            <ul id="show_msg"></ul>
+          </div>
+        </div>
+        <div class="input-group">
+          <span class="input-group-btn">
+              <div class="dropdown">
+                  <button id="BtnTextType" class="btn dropdown-toggle" type="button" data-toggle="dropdown">Question</button>
+                  <ul class="dropdown-menu">
+                    <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Question</button></li>
+                    <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Comment</button></li>
+                    <li class="divider"></li>
+                    <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Chat</button></li>
+                  </ul>
+              </div>
+            </span>
+            <input id='msg' autocomplete="off" onkeypress="return searchKeyPress(event);" type="text" class="form-control" aria-label="Text input with dropdown button">
+            <span class="input-group-btn">
+              <button id='send' onclick='msg_send()' class="btn btn-primary btn-secondary " type="button">Enter</button>
+            </span>
+        </div>
     </div>
   </div>
 </div>

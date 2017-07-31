@@ -24,7 +24,7 @@ serv_io.sockets.on('connection', function(socket) {
   socket.on('add user',function(user){
 		socket.user = user;
     console.log('new user : '+user);
-    serv_io.sockets.in(socket.room).emit('chat message',{ user : user , msg:"加入紀錄系統"});
+    serv_io.sockets.in(socket.room).emit('chat message',{ user : user , msg:"加入囉！"});
 
 		//read file
 		var filepath = __dirname + '/../notes' + '/note_' + socket.user + '.txt';
@@ -52,10 +52,10 @@ serv_io.sockets.on('connection', function(socket) {
 
   });
   socket.on('msg',function(msg){
-		var filename = __dirname + '/../notes_record' + '/note_' + socket.user + '.txt';
-		console.log( socket.user + ':' + msg.msg);
+		var filename = __dirname + '/../notes_record' + '/note_' + msg.title + '.txt';
+		console.log( '(' + msg.type + ')' + socket.user + ':' + msg.msg + "Title : " + msg.title);
     serv_io.sockets.in(socket.room).emit('chat message', { user : socket.user , msg : msg.msg });
-		fs.appendFile( filename , socket.user + '-' +msg.msg + '\n', function(error){
+		fs.appendFile( filename , '(' + msg.type + ')' +  socket.user + ' : ' +msg.msg + '\n', function(error){
 			if(error){
 				console.log('Taking notes error.');
 			}
@@ -68,7 +68,7 @@ serv_io.sockets.on('connection', function(socket) {
   socket.on('disconnect',function(){  //disconnect是有特殊意義的!!!不能隨便亂取
     socket.leave(socket.room)
 		console.log( socket.user + ' disconnect' );
-    serv_io.emit('chat message', { user : socket.user , msg : "已離開 QAQ" });
+    serv_io.emit('chat message', { user : socket.user , msg : "已離開" });
   });
 
 });
