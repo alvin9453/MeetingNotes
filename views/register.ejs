@@ -12,16 +12,20 @@
         <h1 class="text-center login-title">Registration Details</h1>
         <div class="signup-wall">
           <form class="form-signin" action="/signup" method="POST">
+    <!--        <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">@</span>
+              <input type="text" name="account" class="form-control" placeholder="Account" required  autofocus/>
+            </div> -->
             <div class="input-group">
               <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-              <input type="text" name="username" class="form-control" placeholder="Name" required  autofocus/>
+              <input type="text" name="username" class="form-control" placeholder="User Name" required  autofocus/>
             </div>
             <div class="input-group">
               <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
               <input type="password" name="password" class="form-control nomargin" placeholder="Password" required />
             </div>
             <div class="input-group">
-                <span class="input-group-addon" id="basic-addon1">@</span>
+                <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-envelope"></span></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" require />
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>

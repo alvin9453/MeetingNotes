@@ -2,7 +2,7 @@
 var debug = require('debug')('my-application');
 var app = require('../app');
 
-var port = 8081;
+var port = 3261;
 
 app.set('port', process.env.PORT || port);
 
