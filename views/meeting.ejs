@@ -4,20 +4,24 @@
   <meta charset="utf-8" />
 <!--  <link rel='stylesheet' href='/stylesheets/client.css' rel='stylesheet' /> -->
   <style>
-  #message_block , #message_block2{
-    position: relative;
-    height:200px;
-    border: solid 2px black;
+  #chat , #question , #comment{
+    margin-top:10px;
+    margin-left:10px;
+    text-align:left;
+    border-style:solid;
+    border-width:2px;
     overflow:auto;
-    resize: both;
+    width:600px;
+    height:300px;
+    font-size:14px;
+    float:left; 
+    border-radius:10px;
   }
-  #message_block3{
-    position: relative;
-    height:100px;
-    border: solid 2px black;
-    overflow:auto;
-    resize: both;
+  .tab-content>.tab-pane{
+    display:block;
+    height:1000px;
   }
+
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/socket.io/socket.io.js"></script>
@@ -35,48 +39,63 @@
     for (var i = 0; i < title.length; i++) {
       rs_title = rs_title + title.substr(i, 1).replace(pattern, '_');
     }
-    console.log(rs_title);
     socket.emit("join room" , rs_title);
     socket.emit("add user", name);
+
     function msg_send(){
       var message = document.getElementById('msg').value;
+      var inputType = document.getElementById("BtnTextType").innerHTML;
+      
       if( message != "" ){
-        var inputType = document.getElementById("BtnTextType").innerHTML;
         inputType = inputType.substr(0 , inputType.search(/</) );
-        console.log(inputType);
         socket.emit("msg",{msg:message , type : inputType });
         document.getElementById('msg').value = "";
+        console.log(inputType);
+        switch(inputType){
+          case "Chat":
+            var obj_div = document.getElementById("chat");
+            obj_div.scrollTop = obj_div.scrollHeight;
+            break;
+          case "Comment":
+            var obj_div = document.getElementById("comment");
+            obj_div.scrollTop = obj_div.scrollHeight;
+            break;
+          case "Question":
+            var obj_div = document.getElementById("question");
+            break;
+        }
       }
+      obj_div.scrollTop = obj_div.scrollHeight;
+
 
     };
     socket.on('meeting message', function(msg){
-      var ul = document.createElement("ul");
+      var ul = document.createElement("p");
       var new_msg_node = document.createTextNode(msg.user + " : " + msg.msg);
       var mtype = msg.type;
       ul.appendChild(new_msg_node);
-      console.log(msg.type);
       if( mtype.search(/Question/i) != -1 )
-        var element = document.getElementById("message_block");
+        var element = document.getElementById("question");
       else if( mtype.search(/Comment/i) != -1 )
-        var element = document.getElementById("message_block2");
+        var element = document.getElementById("comment");
       else if( mtype.search(/Chat/i) != -1 )
-        var element = document.getElementById("message_block3");
+        var element = document.getElementById("chat");
       element.appendChild(ul);
     });
     socket.on('show notes', function(records){
-      var ul = document.createElement("ul");
+      var para = document.createElement("p");
       var tmp = records.split(')');
       if(tmp[0] == "(Question"){
         var new_msg_node = document.createTextNode(tmp[1]);
-        ul.appendChild(new_msg_node);
-        var element = document.getElementById("message_block");
-        element.appendChild(ul);
+        para.appendChild(new_msg_node);
+        var element = document.getElementById("question");
+        element.appendChild(para);
       }
       else if(tmp[0] == "(Comment"){
         var new_msg_node = document.createTextNode(tmp[1]);
-        ul.appendChild(new_msg_node);
-        var element = document.getElementById("message_block2");
-        element.appendChild(ul);
+        para.appendChild(new_msg_node);
+        var element = document.getElementById("comment");
+        element.appendChild(para);
       }
     });
     /*
@@ -168,25 +187,21 @@
             <button id='send' onclick='msg_send()' class="btn btn-primary btn-secondary " type="button">Enter</button>
           </span>
       </div>
-        <h2>Chat</h2>
-        <div class="well" id="message_block3">
-          <div >
-            <ul id="show_chat"></ul>
+      <div class="tabbable"> <!-- Only required for left/right tabs -->
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#question" data-toggle="tab">Question</a></li>
+          <li><a href="#comment" data-toggle="tab">Comment</a></li>
+          <li><a href="#chat" data-toggle="tab">Chat</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane" id="chat">
+          </div>
+          <div class="tab-pane active" id="question">
+          </div>
+          <div class="tab-pane" id="comment">
           </div>
         </div>
-        <h2>Questions</h2>
-        <div class="well" id="message_block">
-          <div >
-            <ul id="show_question"></ul>
-          </div>
-        </div>
-        <h2>Comments</h2>
-        <div class="well" id="message_block2">
-          <div >
-            <ul id="show_comment"></ul>
-          </div>
-        </div>
-
+      </div>
     </div>
   </div>
 </div>
