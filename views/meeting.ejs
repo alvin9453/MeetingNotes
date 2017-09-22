@@ -2,21 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-<!--  <link rel='stylesheet' href='/stylesheets/client.css' rel='stylesheet' /> -->
-  <style>
-  #chat , #question , #comment{
-    margin-top: 10px;
-    margin-left: 10px;
-    text-align:left;
-    overflow:auto;
-    height: 600px;
-    font-size:16px;
-    border-radius:10px;
-    border-style:solid;
-    border-width:2px;
-    resize: both;
-  }
-  </style>
+  <link rel='stylesheet' href='/stylesheets/meeting.css' rel='stylesheet' />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/socket.io/socket.io.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -24,11 +10,11 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
     var socket = io();
-    console.log("<%= data[0].ppt_title %>");
     var name = "<%= user.username %>";
     var title = "<%= data[0].ppt_title %>";
     var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？ ]")
     var rs_title = "";
+    var inputTypeValue = "Question";
     for (var i = 0; i < title.length; i++) {
       rs_title = rs_title + title.substr(i, 1).replace(pattern, '_');
     }
@@ -37,24 +23,22 @@
 
     function msg_send(){
       var message = document.getElementById('msg').value;
-      var inputType = document.getElementById("BtnTextType").innerHTML;
       
       if( message != "" ){
-        inputType = inputType.substr(0 , inputType.search(/</) );
-        socket.emit("msg",{msg:message , type : inputType });
+        socket.emit("msg",{msg:message , type : inputTypeValue });
         document.getElementById('msg').value = "";
       }
     };
     socket.on('meeting message', function(msg){
       var para = document.createElement("p");
-      var new_msg_node = document.createTextNode(msg.user + " : " + msg.msg);
-      var mtype = msg.type;
-      para.appendChild(new_msg_node);
-      if( mtype.search(/Question/i) != -1 )
+      var newMsgNode = document.createTextNode(msg.user + " : " + msg.msg);
+      var returnMsgType = msg.type;
+      para.appendChild(newMsgNode);
+      if( returnMsgType.search(/Question/i) != -1 )
         var element = document.getElementById("question");
-      else if( mtype.search(/Comment/i) != -1 )
+      else if( returnMsgType.search(/Comment/i) != -1 )
         var element = document.getElementById("comment");
-      else if( mtype.search(/Chat/i) != -1 )
+      else if( returnMsgType.search(/Chat/i) != -1 )
         var element = document.getElementById("chat");
       element.appendChild(para);
       element.scrollTop = element.scrollHeight;
@@ -63,28 +47,20 @@
       var para = document.createElement("p");
       var tmp = records.split(')');
       if(tmp[0] == "(Question"){
-        var new_msg_node = document.createTextNode(tmp[1]);
-        para.appendChild(new_msg_node);
+        var newMsgNode = document.createTextNode(tmp[1]);
+        para.appendChild(newMsgNode);
         var element = document.getElementById("question");
         element.appendChild(para);
         element.scrollTop = element.scrollHeight;
       }
       else if(tmp[0] == "(Comment"){
-        var new_msg_node = document.createTextNode(tmp[1]);
-        para.appendChild(new_msg_node);
+        var newMsgNode = document.createTextNode(tmp[1]);
+        para.appendChild(newMsgNode);
         var element = document.getElementById("comment");
         element.appendChild(para);
         element.scrollTop = element.scrollHeight;
       }
     });
-    /*
-    function secondsToHms(d) {
-      d = Number(d);
-      var h = Math.floor(d / 3600);
-      var m = Math.floor(d % 3600 / 60);
-      var s = Math.floor(d % 3600 % 60);
-      return ((h > 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + ":" + (s < 10 ? "0" : "") + s);
-    }*/
     function searchKeyPress(e){
         // look for window.event in case event isn't passed in
         e = e || window.event;
@@ -97,7 +73,7 @@
         }
         
     }
-    function load_iframe(){
+    function init(){
       var patt = /https:.*?&#39/;
       var str = "<%= data[0].url %>";
       var match = patt.exec(str);
@@ -107,17 +83,17 @@
       iframeNode.setAttribute("src",url);
       iframeNode.setAttribute("class","embed-responsive-item");
       document.getElementById("slide_block").appendChild(iframeNode);
+      document.getElementById("msgType").innerHTML = inputTypeValue;
     }
-    function inputType(btnValue){
-      document.getElementById("BtnTextType").innerHTML = btnValue.innerHTML + "<span class=\"caret\"></span>";
+    function inputType(tabValue){
+      inputTypeValue = tabValue;
+      document.getElementById("msgType").innerHTML = tabValue;
     }
-
   </script>
   <title><%= data[0].ppt_title %></title>
-
 </head>
-<body onload="load_iframe()">
-  <nav class="navbar navbar-inverse"> <!-- Nav bar on the top of screen  -->
+<body onload="init();">
+  <nav class="navbar navbar-inverse">
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -149,28 +125,11 @@
       </div>
     </div>
     <div class="col-sm-5 col-md-5">
-      <div class="input-group">
-        <span class="input-group-btn">
-            <div class="dropdown">
-                <button id="BtnTextType" class="btn dropdown-toggle" type="button" data-toggle="dropdown">Question<span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Question</button></li>
-                  <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Comment</button></li>
-                  <li class="divider"></li>
-                  <li><button class="dropdown-item btn btn-block" onclick="inputType(this)">Chat</button></li>
-                </ul>
-            </div>
-          </span>
-          <input id='msg' autocomplete="off" onkeypress="return searchKeyPress(event);" type="text" class="form-control" aria-label="Text input with dropdown button" placeholder="Input your message here...">
-          <span class="input-group-btn">
-            <button id='send' onclick='msg_send()' class="btn btn-primary btn-secondary " type="button">Enter</button>
-          </span>
-      </div>
-      <div class="tabbable"> <!-- Only required for left/right tabs -->
+      <div class="tabbable"> 
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#question" data-toggle="tab">Question</a></li>
-          <li><a href="#comment" data-toggle="tab">Comment</a></li>
-          <li><a href="#chat" data-toggle="tab">Chat</a></li>
+          <li class="active"><a href="#question" data-toggle="tab" onclick="inputType(this.innerHTML)">Question</a></li>
+          <li><a href="#comment" data-toggle="tab" onclick="inputType(this.innerHTML)">Comment</a></li>
+          <li><a href="#chat" data-toggle="tab" onclick="inputType(this.innerHTML)">Chat</a></li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="question">
@@ -180,6 +139,14 @@
           <div class="tab-pane" id="chat">
           </div>  
         </div>
+      </div>
+      <p id="msgType"></p>
+      <div class="form-group-group">
+          <textarea id='msg' class="form-control" rows="4" autocomplete="off" onkeypress="return searchKeyPress(event);" placeholder="Input your message here..."></textarea>
+      </div>
+      <div>
+          <p id="hint">Press Enter to send messages</p>
+          <button id='send' onclick='msg_send()' class="btn btn-primary btn-secondary " type="button">Send</button>
       </div>
     </div>
   </div>

@@ -1,0 +1,36 @@
+#chat , #question , #comment{
+  margin-top: 10px;
+  margin-left: 10px;
+  padding: 10px;
+  text-align:left;
+  overflow:auto;
+  height: 500px;
+  font-size:16px;
+  border-radius:10px;
+  border-style:solid;
+  border-width:2px;
+  resize: both;
+}
+#send{
+  margin-top:10px;
+  float:right;
+  width:80px;
+  height:40px;
+  font-size:18px;
+}
+#hint{
+  margin-left:30px;
+  margin-top:15px;
+  color:gray;
+  font-size:12px;
+  float:left;
+}
+#msg{
+  margin-left:10px;
+}
+#msgType{
+  margin-top:20px;
+  margin-left:20px;
+  font-size:18px;
+  font-weight:bold;
+}
