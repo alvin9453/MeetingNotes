@@ -1,3 +1,13 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<% if( message == "Not Found"){ %>
+    <meta http-equiv="refresh" content="0;url=/home" />
+<%
+    }else{
+%>
+    <h1>Oh no , something bad happened :(</h1>
+    <!-- <h1><%= message %></h1> 
+        <h2><%= error.status %></h2>
+        <pre><%= error.stack %></pre>
+    -->
+<%            
+    }
+%>
