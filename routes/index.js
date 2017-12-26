@@ -83,16 +83,12 @@ module.exports = function(passport){
 	router.post('/meeting',isAuthenticated,function(req, res,next) {
 		res.locals.username = req.session.username;
 		res.locals.authenticated = req.session.logined;
-		console.log("Body" , req.body);
-		console.log(req.user);
 
 		var ppt = new PPTURLs();
 		var title = req.body.input_ppt_title;
 
-		console.log(title);
-
 		PPTURLs.find( { ppt_title : title } , function(err, data){
-			console.log(data);
+			console.log("Data :",data);
 			res.render('meeting',
 					{
 							user : req.user,

@@ -2,78 +2,61 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <link rel='stylesheet' href='/stylesheets/meeting.css' rel='stylesheet' />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="/socket.io/socket.io.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- Firepad and Firebase js -->
+  <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>      
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.js"></script>
+  <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
+
+  <!-- Firepad css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.css" />
+  <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
+    
+
+  <!-- This page css -->
+  <link rel="stylesheet" href="/stylesheets/notePage.css" />
+
   <script>
-    var socket = io();
     var name = "<%= user.username %>";
     var title = "<%= data[0].ppt_title %>";
     var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）&;|{}【】‘；：”“'。，、？ ]")
     var rs_title = "";
-    var inputTypeValue = "Question";
     for (var i = 0; i < title.length; i++) {
       rs_title = rs_title + title.substr(i, 1).replace(pattern, '_');
     }
-    socket.emit("join room" , rs_title);
-    socket.emit("add user", name);
+    function initFirepad() {
+        // Initialize Firebase.
+        // TODO: replace with your Firebase project configuration.
+        var config = {
+            apiKey: "AIzaSyCI90prOBGvod-lFHYtFOKktnpXgolRWhE",
+            authDomain: "note-taking-system.firebaseapp.com",
+            databaseURL: "https://note-taking-system.firebaseio.com",
+            projectId: "note-taking-system",
+            storageBucket: "note-taking-system.appspot.com",
+            messagingSenderId: "777619796758"
+        };
 
-    function msg_send(){
-      var message = document.getElementById('msg').value;
-      
-      if( message != "" ){
-        socket.emit("msg",{msg:message , type : inputTypeValue });
-        document.getElementById('msg').value = "";
-      }
-    };
-    socket.on('meeting message', function(msg){
-      var para = document.createElement("p");
-      var newMsgNode = document.createTextNode(msg.user + " : " + msg.msg);
-      var returnMsgType = msg.type;
-      para.appendChild(newMsgNode);
-      if( returnMsgType.search(/Question/i) != -1 )
-        var element = document.getElementById("question");
-      else if( returnMsgType.search(/Comment/i) != -1 )
-        var element = document.getElementById("comment");
-      else if( returnMsgType.search(/Chat/i) != -1 )
-        var element = document.getElementById("chat");
-      element.appendChild(para);
-      element.scrollTop = element.scrollHeight;
-    });
-    socket.on('show notes', function(records){
-      var para = document.createElement("p");
-      var tmp = records.split(')');
-      if(tmp[0] == "(Question"){
-        var newMsgNode = document.createTextNode(tmp[1]);
-        para.appendChild(newMsgNode);
-        var element = document.getElementById("question");
-        element.appendChild(para);
-        element.scrollTop = element.scrollHeight;
-      }
-      else if(tmp[0] == "(Comment"){
-        var newMsgNode = document.createTextNode(tmp[1]);
-        para.appendChild(newMsgNode);
-        var element = document.getElementById("comment");
-        element.appendChild(para);
-        element.scrollTop = element.scrollHeight;
-      }
-    });
-    function searchKeyPress(e){
-        // look for window.event in case event isn't passed in
-        e = e || window.event;
-        if (e.keyCode == 13){
-            document.getElementById('send').click();
-            return false;
-        }
-        else{
-            return true;
-        }
-        
+        firebase.initializeApp(config);
+
+        var firepadRef = firebase.database().ref().child('<%= data[0].ppt_title %>');
+
+        var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+        var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+            { richTextToolbar: true, richTextShortcuts: true , userId:"<%= data[0].ppt_title %>" }
+        );
+        firepad.on('ready', function() {
+            if(firepad.isHistoryEmpty()) {
+                firepad.setHtml('<span style="font-size: 24px;"><%= data[0].ppt_title %> </span>');
+            }
+        });
     }
+
     function init(){
+      initFirepad();
       var patt = /https:.*?&#39/;
       var str = "<%= data[0].url %>";
       var match = patt.exec(str);
@@ -82,12 +65,23 @@
       var iframeNode = document.createElement("iframe");
       iframeNode.setAttribute("src",url);
       iframeNode.setAttribute("class","embed-responsive-item");
-      document.getElementById("slide_block").appendChild(iframeNode);
-      document.getElementById("msgType").innerHTML = inputTypeValue;
+      document.getElementById("slide").appendChild(iframeNode);
     }
-    function inputType(tabValue){
-      inputTypeValue = tabValue;
-      document.getElementById("msgType").innerHTML = tabValue;
+  </script>
+   <script>
+     function slidebtn(){
+       var btn = document.getElementById("slidebtn");
+       console.log(btn.innerHTML);
+       if( btn.innerHTML == "Hide Slide" ){
+           btn.innerHTML = "Show Slide";
+           document.getElementById('slide').style.width = 0;
+           document.getElementById('firepad-container').style.width = "100%";
+       }
+       else if ( btn.innerHTML == "Show Slide" ){
+           btn.innerHTML = "Hide Slide";
+           document.getElementById('slide').style.width = "50%";
+           document.getElementById('firepad-container').style.width = "50%";
+       }
     }
   </script>
   <title><%= data[0].ppt_title %></title>
@@ -107,6 +101,7 @@
         <ul class="nav navbar-nav">
           <li class="active" ><a href="home">Home</a></li>
           <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
+          <button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Slide</button>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <p class="navbar-text"><span class="glyphicon glyphicon-user"></span><%= user.username %></p>
@@ -119,34 +114,12 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-7 col-md-7">
-      <h2><%= data[0].ppt_title %></h2>
-      <div class="embed-responsive embed-responsive-4by3" id="slide_block">
+    <div class="col-sm-6 col-md-6">
+      <div class="embed-responsive embed-responsive" id="slide">
       </div>
     </div>
-    <div class="col-sm-5 col-md-5">
-      <div class="tabbable"> 
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#question" data-toggle="tab" onclick="inputType(this.innerHTML)">Question</a></li>
-          <li><a href="#comment" data-toggle="tab" onclick="inputType(this.innerHTML)">Comment</a></li>
-          <li><a href="#chat" data-toggle="tab" onclick="inputType(this.innerHTML)">Chat</a></li>
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane active" id="question">
-          </div>
-          <div class="tab-pane" id="comment">
-          </div>
-          <div class="tab-pane" id="chat">
-          </div>  
-        </div>
-      </div>
-      <p id="msgType"></p>
-      <div class="form-group-group">
-          <textarea id='msg' class="form-control" rows="4" autocomplete="off" onkeypress="return searchKeyPress(event);" placeholder="Input your message here..."></textarea>
-      </div>
-      <div>
-          <p id="hint">Press Enter to send messages</p>
-          <button id='send' onclick='msg_send()' class="btn btn-primary btn-secondary " type="button">Send</button>
+    <div class="col-sm-6 col-md-6">
+      <div id="firepad-container">
       </div>
     </div>
   </div>
