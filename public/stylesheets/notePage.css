@@ -6,31 +6,26 @@ body { margin: 0; height: 100%; }
 #firepad-container {
   position: fixed;
   width: 50%;
-  height: 95%;
-  right: 0;
-  bottom: 0;
+  height: 100%;
+  right: 0px;
+  bottom: 0px;
+  top : 50px;
   background-color: rgba(0, 0, 0, 0.788);
 }
 
 .CodeMirror {
   background-color: white;
   border-style: outset;
-  border-radius: 5px;
 }
 
 /* slide style */
 
 #slide {
   position : fixed;
-  bottom: 10;
-  top: auto;
-  left: 0;
-  margin : 0; 
+  top: 50px;
+  left: 0px;
+  bottom: 10px;
+  margin : 0px; 
   width : 50%;
-  height : 90%;
-}
-
-.my-nav-block {
-  position: relative;
-  height : auto;
+  height : 100%;
 }
