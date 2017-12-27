@@ -30,8 +30,6 @@
       rs_title = rs_title + title.substr(i, 1).replace(pattern, '_');
     }
     function initFirepad() {
-        // Initialize Firebase.
-        // TODO: replace with your Firebase project configuration.
         var config = {
             apiKey: "AIzaSyCI90prOBGvod-lFHYtFOKktnpXgolRWhE",
             authDomain: "note-taking-system.firebaseapp.com",
@@ -67,6 +65,10 @@
       iframeNode.setAttribute("src",url);
       iframeNode.setAttribute("class","embed-responsive-item");
       document.getElementById("slide").appendChild(iframeNode);
+
+      var firepadUserList = FirepadUserList.fromDiv(firepadRef.child('users'),
+      document.getElementById('userlist'), userId);
+
     }
   </script>
    <script>
@@ -75,13 +77,13 @@
        console.log(btn.innerHTML);
        if( btn.innerHTML == "Hide Note" ){
            btn.innerHTML = "Show Note";
-           document.getElementById('slide').style.width = "100%";
-           document.getElementById('firepad-container').style.width = "0";
+           document.getElementById('slide').style.right = "0px";
+           document.getElementById('firepad-container').style.left = "100%";
        }
        else if ( btn.innerHTML == "Show Note" ){
            btn.innerHTML = "Hide Note";
-           document.getElementById('slide').style.width = "50%";
-           document.getElementById('firepad-container').style.width = "50%";
+           document.getElementById('slide').style.right = "50%";
+           document.getElementById('firepad-container').style.left = "50%";
        }
     }
   </script>
@@ -123,9 +125,7 @@
       <div id="firepad-container">
       </div>
     </div>
+    
+    
   </div>
 </div>
-
-<footer class="container-fluid">
-  <p>© Copyright by Jia-Wei Lin</p>
-</footer>
