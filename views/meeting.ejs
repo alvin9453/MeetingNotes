@@ -73,13 +73,13 @@
      function slidebtn(){
        var btn = document.getElementById("slidebtn");
        console.log(btn.innerHTML);
-       if( btn.innerHTML == "Hide Slide" ){
-           btn.innerHTML = "Show Slide";
-           document.getElementById('slide').style.width = 0;
-           document.getElementById('firepad-container').style.width = "100%";
+       if( btn.innerHTML == "Hide Note" ){
+           btn.innerHTML = "Show Note";
+           document.getElementById('slide').style.width = "100%";
+           document.getElementById('firepad-container').style.width = "0";
        }
-       else if ( btn.innerHTML == "Show Slide" ){
-           btn.innerHTML = "Hide Slide";
+       else if ( btn.innerHTML == "Show Note" ){
+           btn.innerHTML = "Hide Note";
            document.getElementById('slide').style.width = "50%";
            document.getElementById('firepad-container').style.width = "50%";
        }
@@ -102,7 +102,7 @@
         <ul class="nav navbar-nav">
           <li class="active" ><a href="home">Home</a></li>
           <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
-          <button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Slide</button>
+          <button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Note</button>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <p class="navbar-text"><span class="glyphicon glyphicon-user"></span><%= user.username %></p>
