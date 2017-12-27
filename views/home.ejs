@@ -33,54 +33,59 @@
   <div class="container">
     <h1 class="text-center">Welcome! <%= user.username %></h1>
     <div class="row">
-      <div class="col-sm-6 col-md-6">
-        <h2 class="text-center">Create a new meeting room, or</h2>
-        <form action="add_ppt_url" method="POST">
-          <div class="input-group">
-             <label>PowerPoint Title</label>
-             <input class="form-control" type="text" name="ppt_title" required/>
-          </div>
-          <div class="input-group">
-             <label>Speaker Name</label>
-             <input class="form-control" type="text" name="ppt_speaker" required/>
-          </div>
-          <div class="input-group">
-             <label>Presentation Date</label>
-             <input class="form-control" type="text" name="ppt_date" required/>
-          </div>
-        <label>PowerPoint Embedded code :</label>
-        <textarea class="form-control" name="ppt_url" rows="5" required></textarea>
-        <input class="btn btn-primary" type="submit" value="Create a new meeting" />
-      </form>
-      </div>
-      <div class="col-sm-6 col-md-6">
-        <h2 class="text-center">Join a meeting room</h2>
-        <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Speaker</th>
-              <th>Title</th>
-              <th>Page</th>
-            </tr>
-          </thead>
-          <% for( var i = 0 ; i < ppt_data.length ; i++){  %>
-            <tbody>
-              <tr>
-                <td><%= ppt_data[i].date %></td>
-                <td><%= ppt_data[i].speaker %></td>
-                <td><%= ppt_data[i].ppt_title %></td>
-                <td>
-                  <form action="meeting" method="POST">
-                    <input type="hidden" name="input_ppt_title" value="<%= ppt_data[i].ppt_title %>"/>
-                    <input type="submit" class="btn btn-primary btn-sm btn-block"  value="Go">
-                  </form>
-                </td>
-              </tr>
-            </tbody>
-          <% } %>
+      <% if(user.username == "admin"){ %>
+        <div class="col-sm-6 col-md-6">
+          <h2 class="text-center">Create a new meeting room</h2>
+          <form action="add_ppt_url" method="POST">
+            <div class="input-group">
+              <label>PowerPoint Title</label>
+              <input class="form-control" type="text" name="ppt_title" required/>
+            </div>
+            <div class="input-group">
+              <label>Speaker Name</label>
+              <input class="form-control" type="text" name="ppt_speaker" required/>
+            </div>
+            <div class="input-group">
+              <label>Presentation Date</label>
+              <input class="form-control" type="text" name="ppt_date" required/>
+            </div>
+          <label>PowerPoint Embedded code :</label>
+          <textarea class="form-control" name="ppt_url" rows="5" required></textarea>
+          <input class="btn btn-primary" type="submit" value="Create a new meeting" />
+        </form>
         </div>
+        <div class="col-sm-6 col-md-6">
+      <% }else { %>
+        <div class="col-sm-12 col-md-12">
+      <% } %>
+        <h2 class="text-center">Choose a topic and start taking collaborative note!</h2>
+         <div class="table-responsive">
+         <table class="table table-striped" align="center">
+           <thead>
+              <tr>
+                <th>Date</th>
+                <th>Speaker</th>
+                <th>Title</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <% for( var i = ppt_data.length - 1 ; i >= 0 ; i--){  %>
+              <tbody>
+                <tr>
+                  <td><% if( i== ppt_data.length -1 ){ %> <img src="http://www.ncnu.edu.tw/ncnuweb/units/share/%E5%85%A8%E6%A0%A1%E5%85%B1%E7%94%A8/web_material/images/icon/new/8.gif"> <% } %><%= ppt_data[i].date %></td>
+                  <td><%= ppt_data[i].speaker %></td>
+                  <td><%= ppt_data[i].ppt_title %></td>
+                  <td>
+                    <form action="meeting" method="POST">
+                      <input type="hidden" name="input_ppt_title" value="<%= ppt_data[i].ppt_title %>"/>
+                      <input type="submit" class="btn btn-primary btn-sm btn-block"  value="Show Note">
+                    </form>
+                  </td>
+                </tr>
+              </tbody>
+            <% } %>
+          </div>
+        
       </div>
     </div>
   </div>
