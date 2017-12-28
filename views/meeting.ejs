@@ -31,14 +31,13 @@
     }
     function initFirepad() {
         var config = {
-            apiKey: "AIzaSyCI90prOBGvod-lFHYtFOKktnpXgolRWhE",
-            authDomain: "note-taking-system.firebaseapp.com",
-            databaseURL: "https://note-taking-system.firebaseio.com",
-            projectId: "note-taking-system",
-            storageBucket: "note-taking-system.appspot.com",
-            messagingSenderId: "777619796758"
+          apiKey: "AIzaSyBUmzzF7H-y6fTk_EGDXISSEtua7GlOan0",
+          authDomain: "ncnu-peral-lab-meeting.firebaseapp.com",
+          databaseURL: "https://ncnu-peral-lab-meeting.firebaseio.com",
+          projectId: "ncnu-peral-lab-meeting",
+          storageBucket: "",
+          messagingSenderId: "832138510111"
         };
-
         firebase.initializeApp(config);
 
         var firepadRef = firebase.database().ref().child('<%= data[0].ppt_title %>');
@@ -48,8 +47,44 @@
             { richTextToolbar: true, richTextShortcuts: true , userId:"<%= data[0].ppt_title %>" }
         );
         firepad.on('ready', function() {
+        defaultMinute = `<pre>
+PERAL Lab Meeting<br>
+時間：106年1月1日19：00<br>
+地點：暨南大學科三館321教室<br>
+主講人：主講人一<br>
+紀錄：記錄人<br>
+出席者：吳坤熹老師、出席者1、出席者2<br>
+<br>
+會議主題：主題一(主講人一) 、主題二(主講人二)<br>
+會議內容：<br>
+一. 主題一<br>
+1. 摘要一<br>
+2. 摘要二<br>
+二. 主題二<br>
+1. 摘要一<br>
+2. 摘要二<br>
+<br>
+問題討論：<br>
+1. 主題一<br>
+Q1. 建議　(某人建議)<br>
+<br>
+Q2. 問題　(某某提問)<br>
+Ans：回答　(某某回答)<br>
+<br>
+待追蹤事項：<br>
+1. 事項一　(某某負責)<br>
+2. 事項二　(某某負責)<br>
+<br>
+臨時動議：<br>
+1. 動議一　(某某提出)<br>
+Ans：原因一<br>
+<br>
+散會：<br>
+結束時間：21：00<br>
+</pre>
+`
             if(firepad.isHistoryEmpty()) {
-                firepad.setHtml('<span style="font-size: 24px;"><%= data[0].ppt_title %> </span>');
+                firepad.setHtml(defaultMinute);
             }
         });
     }
