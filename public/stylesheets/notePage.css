@@ -6,10 +6,10 @@ body { margin: 0; height: 100%; }
 #firepad-container {
   position: fixed;
   width: auto;
-  height: 100%;
+  height: auto;
   right: 0px;
   left : 50%;
-  bottom: 0px;
+  bottom: 1px;
   top : 50px;
   background-color: rgba(0, 0, 0, 0.788);
 }
