@@ -31,3 +31,7 @@ body { margin: 0; height: 100%; }
   width : auto;
   height : auto;
 }
+
+.navbar{
+  z-index: 2;
+}
