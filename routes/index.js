@@ -89,6 +89,7 @@ module.exports = function(passport){
 
 		PPTURLs.find( { ppt_title : title } , function(err, data){
 			console.log("Data :",data);
+			console.log("User :",req.user)
 			res.render('meeting',
 					{
 							user : req.user,

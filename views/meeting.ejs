@@ -16,10 +16,13 @@
   <!-- Firepad css -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.css" />
   <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
-    
+  <script><%- include ../public/javascripts/firepad-init.ejs %></script>
 
   <!-- This page css -->
   <link rel="stylesheet" href="/stylesheets/notePage.css" />
+
+  <script><%- include ../public/javascripts/firepad-userlist.ejs %></script>
+  <link rel="stylesheet" href="/stylesheets/firepad-userlist.css" />
 
   <script>
     var name = "<%= user.username %>";
@@ -29,66 +32,6 @@
     for (var i = 0; i < title.length; i++) {
       rs_title = rs_title + title.substr(i, 1).replace(pattern, '_');
     }
-    function initFirepad() {
-        var config = {
-          apiKey: "AIzaSyBUmzzF7H-y6fTk_EGDXISSEtua7GlOan0",
-          authDomain: "ncnu-peral-lab-meeting.firebaseapp.com",
-          databaseURL: "https://ncnu-peral-lab-meeting.firebaseio.com",
-          projectId: "ncnu-peral-lab-meeting",
-          storageBucket: "",
-          messagingSenderId: "832138510111"
-        };
-        firebase.initializeApp(config);
-
-        var firepadRef = firebase.database().ref().child('<%= data[0].ppt_title %>');
-
-        var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
-        var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
-            { richTextToolbar: true, richTextShortcuts: true , userId:"<%= data[0].ppt_title %>" }
-        );
-        firepad.on('ready', function() {
-        defaultMinute = `<pre>
-PERAL Lab Meeting<br>
-時間：106年1月1日19：00<br>
-地點：暨南大學科三館321教室<br>
-主講人：主講人一<br>
-紀錄：記錄人<br>
-出席者：吳坤熹老師、出席者1、出席者2<br>
-<br>
-會議主題：主題一(主講人一) 、主題二(主講人二)<br>
-會議內容：<br>
-一. 主題一<br>
-1. 摘要一<br>
-2. 摘要二<br>
-二. 主題二<br>
-1. 摘要一<br>
-2. 摘要二<br>
-<br>
-問題討論：<br>
-1. 主題一<br>
-Q1. 建議　(某人建議)<br>
-<br>
-Q2. 問題　(某某提問)<br>
-Ans：回答　(某某回答)<br>
-<br>
-待追蹤事項：<br>
-1. 事項一　(某某負責)<br>
-2. 事項二　(某某負責)<br>
-<br>
-臨時動議：<br>
-1. 動議一　(某某提出)<br>
-Ans：原因一<br>
-<br>
-散會：<br>
-結束時間：21：00<br>
-</pre>
-`
-            if(firepad.isHistoryEmpty()) {
-                firepad.setHtml(defaultMinute);
-            }
-        });
-    }
-
     function init(){
       initFirepad();
       var patt = /https:.*?&#39/;
@@ -100,10 +43,6 @@ Ans：原因一<br>
       iframeNode.setAttribute("src",url);
       iframeNode.setAttribute("class","embed-responsive-item");
       document.getElementById("slide").appendChild(iframeNode);
-
-      var firepadUserList = FirepadUserList.fromDiv(firepadRef.child('users'),
-      document.getElementById('userlist'), userId);
-
     }
   </script>
    <script>
@@ -139,7 +78,14 @@ Ans：原因一<br>
         <ul class="nav navbar-nav">
           <li class="active" ><a href="home">Home</a></li>
           <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
-          <button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Note</button>
+          <li><button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Note</button></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Online users
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><div id="userlist"></div></li>
+            </ul>
+          </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <p class="navbar-text"><span class="glyphicon glyphicon-user"></span><%= user.username %></p>
