@@ -32,6 +32,7 @@
     for (var i = 0; i < title.length; i++) {
       rs_title = rs_title + title.substr(i, 1).replace(pattern, '_');
     }
+
     function init(){
       initFirepad();
       var patt = /https:.*?&#39/;
@@ -44,8 +45,7 @@
       iframeNode.setAttribute("class","embed-responsive-item");
       document.getElementById("slide").appendChild(iframeNode);
     }
-  </script>
-   <script>
+
      function slidebtn(){
        var btn = document.getElementById("slidebtn");
        console.log(btn.innerHTML);
@@ -77,6 +77,7 @@
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
           <li class="active" ><a href="home">Home</a></li>
+          <li><a href="http://ms15.voip.edu.tw/%7Ewebmaster/meeting/" target="#">Lab Meeting Page</a></li>
           <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
           <li><button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Note</button></li>
           <li class="dropdown">
