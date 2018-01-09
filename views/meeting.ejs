@@ -21,6 +21,9 @@
   <!-- This page css -->
   <link rel="stylesheet" href="/stylesheets/notePage.css" />
 
+  <script><%- include ../public/javascripts/firepad-userlist.ejs %></script>
+  <link rel="stylesheet" href="/stylesheets/firepad-userlist.css" />
+
   <script>
     var name = "<%= user.username %>";
     var title = "<%= data[0].ppt_title %>";
@@ -78,7 +81,14 @@
           <li class="active" ><a href="home">Home</a></li>
           <li><a href="http://ms15.voip.edu.tw/%7Ewebmaster/meeting/" target="#">Lab Meeting Page</a></li>
           <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
-          <button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Note</button>
+          <li><button class="btn btn-danger navbar-btn" id="slidebtn" onclick="slidebtn()">Hide Note</button></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Online users
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><div id="userlist"></div></li>
+            </ul>
+          </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <p class="navbar-text"><span class="glyphicon glyphicon-user"></span><%= user.username %></p>
