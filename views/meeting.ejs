@@ -34,9 +34,7 @@
       initFirepad();
       var patt = /https:.*?(quot;|#39)/;
       var str = "<%= data[0].url %>";
-      console.log(str);
       var match = patt.exec(str);
-      console.log(match);
       var url = match[0].substr(0,match[0].length - 4);
       url = url.replace(/&amp;/g,"&");
       var iframeNode = document.createElement("iframe");
